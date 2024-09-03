@@ -10,10 +10,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-var (
-	temperature = 0.0
-)
-
+// PENDING: Add flag for persist chat on context
 func Request(prompt string) (string, error) {
 	secretKey := os.Getenv("GEMINI_API_KEY")
 	ctx := context.Background()
