@@ -23,8 +23,14 @@ func main() {
 		prompt = strings.TrimSpace(scanner.Text())
 		res, err := gemini.Request(prompt)
 		if err != nil {
-			log.Fatal("Error on request:", err)
+			fmt.Println("Error on request:", err)
+			continue
 		}
-		fmt.Println("AI answer:", res)
+		promptTemplate := fmt.Sprintf("[message_to_llm]%s[/message_to_llm]", prompt)
+		resTemplate := fmt.Sprintf("[answer_from_llm]%s[/answer_from_llm]", res)
+		gemini.AddHistory(promptTemplate)
+		gemini.AddHistory(resTemplate)
+		fmt.Println(res)
 	}
+}
 }

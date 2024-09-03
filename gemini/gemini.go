@@ -10,7 +10,6 @@ import (
 	"google.golang.org/api/option"
 )
 
-// PENDING: Add flag for persist chat on context
 func Request(prompt string) (string, error) {
 	secretKey := os.Getenv("GEMINI_API_KEY")
 	ctx := context.Background()
@@ -26,12 +25,16 @@ func Request(prompt string) (string, error) {
 	model := client.GenerativeModel("gemini-1.5-flash")
 	model.SetTemperature(float32(temperature))
 
-	response, err := model.GenerateContent(ctx, genai.Text(prompt))
+	finalPrompt := "Context:\n" +
+		BuildContext() +
+		"\nUser Prompt: " +
+		prompt +
+		"\n\n[HERE_YOUR_RESPONSE_PLAIN_TEXT_NO_TAGS]"
+	response, err := model.GenerateContent(ctx, genai.Text(finalPrompt))
 
 	if err != nil {
 		log.Println("error generating content", err)
 	}
-
 	return parseResponse(response)
 }
 
