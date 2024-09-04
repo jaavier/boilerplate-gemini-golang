@@ -1,15 +1,10 @@
 package main
 
 import (
+	"app/gemini"
+	"app/prompts"
 	"fmt"
 	"log"
-)
-
-const (
-	PERSONAL_ASSISTANT = iota
-	PYTHON_INTERPRETER
-	TALK_FILE
-	LIMIT = iota - 1
 )
 
 func main() {
@@ -17,9 +12,15 @@ func main() {
 		log.Fatal(err)
 	}
 	for {
-		prompt := readPrompt("Prompt: ")
-		if err := processPrompt(prompt, TALK_FILE); err != nil {
-			fmt.Println("Error on request:", err)
+		userPrompt := readPrompt("Prompt: ")
+		prompt := prompts.PythonInterpreter(userPrompt)
+		jsonMode := true
+		response, err := gemini.Request(prompt)
+		if err != nil {
+			fmt.Println("Error gemini request:", err)
+			continue
 		}
+		gemini.AddMessage(prompt)
+		processResponse(response, jsonMode)
 	}
 }
