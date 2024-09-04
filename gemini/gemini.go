@@ -25,20 +25,18 @@ func Request(prompt string) (string, error) {
 	model := client.GenerativeModel("gemini-1.5-flash")
 	model.SetTemperature(float32(temperature))
 
-	finalPrompt := "Context:\n" +
-		BuildContext() +
-		"\nUser Prompt: " +
-		prompt +
-		"\n\n[HERE_YOUR_RESPONSE_PLAIN_TEXT_NO_TAGS]"
-	response, err := model.GenerateContent(ctx, genai.Text(finalPrompt))
+	response, err := model.GenerateContent(ctx, genai.Text(prompt))
 
 	if err != nil {
-		log.Println("error generating content", err)
+		fmt.Println("error generating content", err)
 	}
 	return parseResponse(response)
 }
 
 func parseResponse(response *genai.GenerateContentResponse) (string, error) {
+	if response.Candidates[0].FinishReason != genai.FinishReasonStop {
+		return "", fmt.Errorf("invalid response: %s", response.Candidates[0].FinishReason)
+	}
 	if response == nil ||
 		response.Candidates == nil ||
 		len(response.Candidates) == 0 ||
@@ -46,4 +44,16 @@ func parseResponse(response *genai.GenerateContentResponse) (string, error) {
 		return "", fmt.Errorf("invalid response")
 	}
 	return fmt.Sprintf("%s", response.Candidates[0].Content.Parts[0]), nil
+}
+
+func AddMessage(message string) error {
+	messageTemplate := fmt.Sprintf("[message_to_llm]%s[/message_to_llm]", message)
+	AddHistory(messageTemplate)
+	return nil
+}
+
+func AddResponse(response string) error {
+	responseTemplate := fmt.Sprintf("[answer_from_llm]%s[/answer_from_llm]", response)
+	AddHistory(responseTemplate)
+	return nil
 }
