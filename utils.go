@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -52,7 +52,11 @@ func removeCodeMarks(s string) string {
 	return s
 }
 
-func escapeSpecialChars(str string) string {
-	re := regexp.MustCompile(`[^\w\s]`)
-	return re.ReplaceAllString(str, "\\\\$0")
+func readPrompt(message string) string {
+	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Print(message)
+	if !scanner.Scan() {
+		return ""
+	}
+	return strings.TrimSpace(scanner.Text())
 }
