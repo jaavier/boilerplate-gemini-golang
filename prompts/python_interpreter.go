@@ -18,7 +18,7 @@ var PYTHON_INTERPRETER_PROMPT = `{
 	},
 }`
 
-func PythonInterpreter(prompt string) string {
+func PythonInterpreter(userPrompt string) string {
 	context := gemini.BuildHistory()
 	role := "Act as Python interpreter." // Python || os.Args[1]?
 
@@ -26,6 +26,6 @@ func PythonInterpreter(prompt string) string {
 		PYTHON_INTERPRETER_PROMPT,
 		context,
 		role,
-		prompt,
+		userPrompt,
 	)
 }

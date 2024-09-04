@@ -19,7 +19,7 @@ var TALK_FILE_PROMPT = `{
 	},
 }`
 
-func TalkFile(prompt string) string {
+func TalkFile(userPrompt string) string {
 	context := gemini.BuildHistory()
 	role := "Act as a software engineer especialized in refactor, performance and optimization."
 
@@ -27,6 +27,6 @@ func TalkFile(prompt string) string {
 		TALK_FILE_PROMPT,
 		context,
 		role,
-		prompt,
+		userPrompt,
 	)
 }
