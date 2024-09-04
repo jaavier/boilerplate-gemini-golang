@@ -1,7 +1,5 @@
 # boilerplate-gemini-golang
 This is a boilerplate for starting to create applications with the Gemini LLM (by Google).
-<<<<<<< Updated upstream
-=======
 
 ## How to Use
 First:
@@ -99,4 +97,3 @@ _Note: AddMessage and AddResponse are used by default, so the LLM has "memory". 
 
 ## It's your turn!
 Start building an app with LLM now ❤️
->>>>>>> Stashed changes
