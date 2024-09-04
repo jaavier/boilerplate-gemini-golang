@@ -3,8 +3,16 @@ This is a boilerplate for starting to create applications with the Gemini LLM (b
 <<<<<<< Updated upstream
 =======
 
-## How to use?
-You have to add your own prompt in the **prompts** folder. Let's add "**my_custom_prompt.go**".
+## How to Use
+First:
+1. Rename the **.env.example** file to **.env**.
+2. Open the newly renamed **.env** file and add your **GEMINI_API_KEY**.
+3. You can obtain your API key [here](https://aistudio.google.com/app/apikey).
+
+With this done, we can continue 😎
+
+You have to add your own prompt in the **prompts** folder. Let's add "**my_custom_prompt.go**". 
+
 
 ```sh
 prompts
@@ -14,7 +22,9 @@ prompts
 └── talk_file.go
 ```
 
-`prompts/my_custom_prompt.go` must contain a prompt template and a function that receives the prompt written by the user and converts it to useful instructions for the LLM.
+Now our **prompts** folder contains these files.
+
+Important: `prompts/my_custom_prompt.go` must contain a prompt template and a function that receives the prompt written by the user and converts it to useful instructions for the LLM.
 
 This is a basic example, so we will receive the answer just in Markdown.
 
