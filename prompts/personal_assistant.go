@@ -12,5 +12,5 @@ User Prompt: %s
 [HERE_YOUR_RESPONSE_PLAIN_TEXT_NO_TAGS]`
 
 func BasicPersonalAssistant(prompt string) string {
-	return fmt.Sprintf(PERSONAL_ASSISTANT_PROMPT, gemini.BuildContext(), prompt)
+	return fmt.Sprintf(PERSONAL_ASSISTANT_PROMPT, gemini.BuildHistory(), prompt)
 }

@@ -20,7 +20,7 @@ var TALK_FILE_PROMPT = `{
 }`
 
 func TalkFile(prompt string) string {
-	context := gemini.BuildContext()
+	context := gemini.BuildHistory()
 	role := "Act as a software engineer especialized in refactor, performance and optimization."
 
 	return fmt.Sprintf(

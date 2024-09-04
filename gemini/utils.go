@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func BuildContext() string {
+func BuildHistory() string {
 	return strings.Join(GetHistory(), "\n")
 }
 
