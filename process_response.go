@@ -5,15 +5,15 @@ import (
 	"fmt"
 )
 
-func processResponse(response string, jsonMode bool) error {
+func processResponse(response string, jsonMode bool) (string, error) {
+	if response == "" {
+		return "", fmt.Errorf("response cannot be empty")
+	}
 	gemini.AddResponse(response)
 	if jsonMode {
 		// here we have the JSON as string
 		// we can unmarshal to custom struct
-		fmt.Println(parseResponse(response))
-		return nil
+		return parseResponse(response), nil
 	}
-	fmt.Println(response)
-	// here you can
-	return nil
+	return response, nil
 }

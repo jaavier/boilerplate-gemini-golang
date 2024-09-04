@@ -21,6 +21,10 @@ func main() {
 			continue
 		}
 		gemini.AddMessage(prompt)
-		processResponse(response, jsonMode)
+		if newResponse, err := processResponse(response, jsonMode); err != nil {
+			fmt.Println("Error processing response:", err.Error())
+		} else {
+			fmt.Println(newResponse)
+		}
 	}
 }
