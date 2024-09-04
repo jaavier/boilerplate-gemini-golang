@@ -69,11 +69,11 @@ func main() {
 
 ## Explaining utilities
 Gemini package includes 2 functions for manage the history (memory):
-- AddMessage: If you want the LLM remember something that you wrote, you must use:
+- AddMessage: If you want the LLM remember something that you wrote, you must use this function after the request was validated:
 ```go
 gemini.AddMessage(message)
 ```
-- AddResponse: If you want the LLM remember something that it answered in the past, you must use
+- AddResponse: If you want the LLM remember something that it answered in the past, you must use:
 ```go
 gemini.AddResponse(response)
 ```
