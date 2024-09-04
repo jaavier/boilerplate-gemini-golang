@@ -2,18 +2,7 @@
 This is a boilerplate for starting to create applications with the Gemini LLM (by Google).
 
 # How to use?
-Add a mode in main.go under TALK_FILE. For example, lets add "MY_CUSTOM_MODE"
-```go
-// main.go
-const (
-	PERSONAL_ASSISTANT = iota
-	PYTHON_INTERPRETER
-	TALK_FILE
-	MY_CUSTOM_MODE
-	LIMIT = iota - 1
-)
-```
-Now you have to add your own prompt in folder **prompts**. Lets add "**my_custom_prompt.go**"
+You have to add your own prompt in folder **prompts**. Lets add "**my_custom_prompt.go**"
 ```sh
 prompts
 ├── my_custom_prompt.go
@@ -22,6 +11,8 @@ prompts
 └── talk_file.go
 ```
 `prompts/my_custom_prompt.go` must contain a prompt template and a function that receives the prompt written by the user and convert it to useful instructions for the LLM.
+
+This is a basic example, so we will receive the answer just in Mark Down.
 
 **prompts/my_custom_prompt.go**
 ```go
@@ -33,7 +24,7 @@ import (
 	"fmt"
 )
 
-var YOUR_OWN_PROMPT = `Context: %s
+var YOUR_OWN_PROMPT_TEMPLATE = `Context: %s
 User Prompt: %s
 
 [YOUR_RESPONSE_HERE]`
@@ -41,30 +32,52 @@ User Prompt: %s
 // var YOUR_OWN_PROMPT = `HERE YOUR OWN PROMPT (JSON, MARKDOWN, YAML, ...)`
 
 func YourOwnHandler(userPrompt string) string {
-	return fmt.Sprintf(YOUR_OWN_PROMPT, gemini.BuildHistory(), userPrompt)
+	return fmt.Sprintf(YOUR_OWN_PROMPT_TEMPLATE, gemini.BuildHistory(), userPrompt)
 }
 ```
-Now open **process_prompt** and add a case "**MY_CUSTOM_MODE**" to the switch
-
+## Adapt main.go
+Now that we have "**YourOwnHandler**", we must use it on our **main.go**, line 16
 ```go
-switch mode {
-case MY_CUSTOM_MODE:
-  finalPrompt = prompts.YourOwnHandler(prompt)
-  // if the LLM will answer a JSON, set jsonMode = true
-case PERSONAL_ASSISTANT:
-  finalPrompt = prompts.BasicPersonalAssistant(prompt)
-case PYTHON_INTERPRETER:
-  finalPrompt = prompts.PythonInterpreter(prompt)
-  jsonMode = true
-case TALK_FILE:
-  err := gemini.AppendFile("./main.go") // os.Args?
-  if err != nil {
-    fmt.Println(err)
-    return err
-  }
-  jsonMode = true
-  finalPrompt = prompts.TalkFile(prompt)
+// main.go
+package main
+
+import (
+	"app/gemini"
+	"app/prompts"
+	"fmt"
+	"log"
+)
+
+func main() {
+	if err := loadEnv("./.env"); err != nil {
+		log.Fatal(err)
+	}
+	for {
+		userPrompt := readPrompt("Prompt: ")
+		prompt := prompts.YourOwnHandler(userPrompt)
+		jsonMode := true
+		response, err := gemini.Request(prompt)
+		if err != nil {
+			fmt.Println("Error gemini request:", err)
+			continue
+		}
+		gemini.AddMessage(prompt)
+		processResponse(response, jsonMode)
+	}
 }
 ```
+
+## Explaining utilities
+Gemini package includes 2 functions for manage the history (memory):
+- AddMessage: If you want the LLM remember something that you wrote, you must use:
+```go
+gemini.AddMessage(message)
+```
+- AddResponse: If you want the LLM remember something that it answered in the past, you must use
+```go
+gemini.AddResponse(response)
+```
+_Note: AddMessage and AddResponse are used by default, like that the LLM has "memory". The memory is limited to 100 messages but you can modify this limit on history.go (MAX_MEMORY)_
+
 # It's your turn!
 Start building an app with LLM now ❤️
