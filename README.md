@@ -92,6 +92,15 @@ gemini.AddMessage(message)
 ```go
 gemini.AddResponse(response)
 ```
+- **processResponse**: When the LLM responds with a JSON object, set the second parameter to `true` to enable `jsonMode`. This ensures that the function processes the response as JSON. For example:
+```go
+processResponse(response, true)
+```
+The function will then look for the "result" key in the JSON returned by the LLM.
+
+If the LLM's response is in Markdown format, set the second parameter to `false`.
+
+If you're using a custom JSON structure, make sure to update the `parseResponse` function and adjust the struct accordingly to correctly handle the response.
 
 _Note: AddMessage and AddResponse are used by default, so the LLM has "memory". The memory is limited to 100 messages, but you can modify this limit in history.go (MAX_MEMORY)._
 
