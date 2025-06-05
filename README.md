@@ -1,108 +1,51 @@
-# boilerplate-gemini-golang
-This is a boilerplate for starting to create applications with the Gemini LLM (by Google).
+# Gemini Golang Boilerplate
 
-## How to Use
-First:
-1. Rename the **.env.example** file to **.env**.
-2. Open the newly renamed **.env** file and add your **GEMINI_API_KEY**.
-3. You can obtain your API key [here](https://aistudio.google.com/app/apikey).
+A lightweight starting point for building Go applications powered by the Gemini LLM. It ships with helpers for history management, response parsing, and a few prompt examples so you can focus on your idea.
 
-With this done, we can continue 😎
+## Quick Start
 
-You have to add your own prompt in the **prompts** folder. Let's add "**my_custom_prompt.go**". 
+1. Copy `.env.example` to `.env` and add your `GEMINI_API_KEY` (grab one from [Google AI Studio](https://aistudio.google.com/app/apikey)).
+2. Run `go run .` and type your prompt when asked.
 
+The boilerplate includes three ready‑to‑use prompt handlers:
 
-```sh
-prompts
-├── my_custom_prompt.go
-├── personal_assistant.go
-├── python_interpreter.go
-└── talk_file.go
-```
+- **BasicPersonalAssistant** – converse with the model as a friendly assistant.
+- **PythonInterpreter** – execute Python commands and receive the result as JSON.
+- **TalkFile** – ask questions about the contents of a file wrapped between `[content_filename=...]` tags.
 
-Now our **prompts** folder contains these files.
+Choose one in `main.go` or create your own.
 
-Important: `prompts/my_custom_prompt.go` must contain a prompt template and a function that receives the prompt written by the user and converts it to useful instructions for the LLM.
+## Creating a Custom Prompt
 
-This is a basic example, so we will receive the answer just in Markdown.
+Add a new file in `prompts/` that formats the user input into the instructions you want to send to Gemini. A minimal handler looks like this:
 
-**prompts/my_custom_prompt.go**
 ```go
-// prompts/my_custom_prompt.go
+// prompts/my_prompt.go
 package prompts
 
 import (
-	"app/gemini"
-	"fmt"
+    "app/gemini"
+    "fmt"
 )
 
-var YOUR_OWN_PROMPT_TEMPLATE = `Context: %s
-User Prompt: %s
+var TEMPLATE = `Context: %s
+User Prompt: %s`
 
-[YOUR_RESPONSE_HERE]`
-
-// var YOUR_OWN_PROMPT = `HERE YOUR OWN PROMPT (JSON, MARKDOWN, YAML, ...)`
-
-func YourOwnHandler(userPrompt string) string {
-	return fmt.Sprintf(YOUR_OWN_PROMPT_TEMPLATE, gemini.BuildHistory(), userPrompt)
+func MyPrompt(userPrompt string) string {
+    return fmt.Sprintf(TEMPLATE, gemini.BuildHistory(), userPrompt)
 }
 ```
 
-## Adapt main.go
-Now that we have "**YourOwnHandler**", we must use it in our **main.go**, line 16.
+Update `main.go` to call `prompts.MyPrompt` and set `jsonMode` depending on your output format.
 
-```go
-// main.go
-package main
+## Processing Responses
 
-import (
-	"app/gemini"
-	"app/prompts"
-	"fmt"
-	"log"
-)
+`processResponse` can optionally parse JSON and stores the conversation history for you. The history length defaults to 100 messages but can be changed in `gemini/history.go`.
 
-func main() {
-	if err := loadEnv("./.env"); err != nil {
-		log.Fatal(err)
-	}
-	for {
-		userPrompt := readPrompt("Prompt: ")
-		prompt := prompts.YourOwnHandler(userPrompt)
-		jsonMode := true
-		response, err := gemini.Request(prompt)
-		if err != nil {
-			fmt.Println("Error gemini request:", err)
-			continue
-		}
-		gemini.AddMessage(prompt)
-		processResponse(response, jsonMode)
-	}
-}
-```
+## Why Use This Boilerplate?
 
-## Explaining utilities
-The Gemini package includes 2 functions for managing the history (memory):
+- Quickly experiment with Gemini using concise Go code.
+- Extend or replace the existing prompts to fit your own workflows.
+- Built‑in helpers remove repetitive boilerplate so you can test ideas faster.
 
-- AddMessage: If you want the LLM to remember something that you wrote, you must use this function after the request was validated:
-```go
-gemini.AddMessage(message)
-```
-- AddResponse: If you want the LLM to remember something that it answered in the past, you must use:
-```go
-gemini.AddResponse(response)
-```
-- **processResponse**: When the LLM responds with a JSON object, set the second parameter to `true` to enable `jsonMode`. This ensures that the function processes the response as JSON. For example:
-```go
-processResponse(response, true)
-```
-The function will then look for the "result" key in the JSON returned by the LLM.
-
-If the LLM's response is in Markdown format, set the second parameter to `false`.
-
-If you're using a custom JSON structure, make sure to update the `parseResponse` function and adjust the struct accordingly to correctly handle the response.
-
-_Note: AddMessage and AddResponse are used by default, so the LLM has "memory". The memory is limited to 100 messages, but you can modify this limit in history.go (MAX_MEMORY)._
-
-## It's your turn!
-Start building an app with LLM now ❤️
+Start hacking and let Gemini power your next project!
