@@ -26,9 +26,8 @@ func Request(prompt string) (string, error) {
 	model.SetTemperature(float32(temperature))
 
 	response, err := model.GenerateContent(ctx, genai.Text(prompt))
-
 	if err != nil {
-		fmt.Println("error generating content", err)
+		return "", fmt.Errorf("error generating content: %w", err)
 	}
 	return parseResponse(response)
 }
