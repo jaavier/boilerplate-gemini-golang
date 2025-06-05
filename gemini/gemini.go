@@ -34,15 +34,17 @@ func Request(prompt string) (string, error) {
 }
 
 func parseResponse(response *genai.GenerateContentResponse) (string, error) {
-	if response.Candidates[0].FinishReason != genai.FinishReasonStop {
-		return "", fmt.Errorf("invalid response: %s", response.Candidates[0].FinishReason)
-	}
 	if response == nil ||
 		response.Candidates == nil ||
 		len(response.Candidates) == 0 ||
 		len(response.Candidates[0].Content.Parts) == 0 {
 		return "", fmt.Errorf("invalid response")
 	}
+
+	if response.Candidates[0].FinishReason != genai.FinishReasonStop {
+		return "", fmt.Errorf("invalid response: %s", response.Candidates[0].FinishReason)
+	}
+
 	return fmt.Sprintf("%s", response.Candidates[0].Content.Parts[0]), nil
 }
 
